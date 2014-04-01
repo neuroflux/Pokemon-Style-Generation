@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		canvas {
+			display: inline-block;
+			width: 320px;
+			height: 320px;
+		}
+	</style>
+</head>
+<body>
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript">
+		var theData;
+		var canvases = [];
+		window.onload = function() {
+			$.ajax({
+				url: "data.php",
+				data: {
+					'action': "load"
+				},
+				error: function(e) {
+					alert("Error!");
+					console.log(e);
+				},
+				success: function(theData) {
+					theData = theData.split("|");
+					var theSize = 32;
+					for (var e = 1; e < theData.length; e++) {
+						theImage = JSON.parse(theData[e]);
+						var canvas = document.createElement('canvas');
+						document.body.appendChild(canvas);
+						var ctx = canvas.getContext('2d');
+						canvas.width = (10*theSize);
+						canvas.height = (10*theSize);
+						var tmpImg = new Image();
+						tmpImg.src = theImage;
+						canvases.push([canvas, tmpImg]);
+					}
+				}
+			});
+			
+			setInterval(function() {
+				for (var c = 0; c < canvases.length; c++) {
+					var thisC = canvases[c][0].getContext("2d");
+					thisC.clearRect(0,0,320,320);
+					thisC.drawImage(canvases[c][1], 0, 0);
+				}
+			}, 500);
+		};
+</script>
+</body>
+</html>
